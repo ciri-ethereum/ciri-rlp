@@ -44,7 +44,7 @@ module Ciri
         if type == Integer
           item = s.read(1)
           if item.nil?
-            raise InvalidError.new "invalid bool value nil"
+            raise InvalidError.new "invalid Integer value nil"
           elsif item == "\x80".b || item.empty?
             0
           elsif item.ord < 0x80
@@ -97,6 +97,8 @@ module Ciri
         s = StringIO.new(s) if s.is_a?(String)
         c = first_char || s.read(1)
         list = []
+        # list is empty
+        # return list if c.nil?
         sub_s = case c.ord
                 when 0xc0..0xf7
                   length = c.ord - 0xc0

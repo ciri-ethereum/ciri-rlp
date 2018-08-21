@@ -18,8 +18,7 @@ require 'ciri/rlp/serializable'
 
 RSpec.describe Ciri::RLP::Serializable do
 
-  let(:my_class) {
-    Class.new do
+    class MyClass
       include Ciri::RLP::Serializable
 
       schema [
@@ -28,6 +27,17 @@ RSpec.describe Ciri::RLP::Serializable do
                {version: Integer}
              ]
       default_data(version: 1)
+    end
+
+  let(:my_class) { MyClass }
+
+  let(:nested_class) {
+    Class.new do
+      include Ciri::RLP::Serializable
+
+      schema [
+               {records: [MyClass]},
+             ]
     end
   }
 
@@ -51,6 +61,26 @@ RSpec.describe Ciri::RLP::Serializable do
     expect {Ciri::RLP.decode(binary)}.to_not raise_error
 
     decoded_msg = my_class.rlp_decode(binary)
+    expect(decoded_msg).to eq msg
+  end
+
+  it 'list can be empty' do
+    msg = my_class.new(signature: '123', nonce: [], version: 4)
+    binary = msg.rlp_encode
+    # is valid RLP encoding format
+    expect {Ciri::RLP.decode(binary)}.to_not raise_error
+
+    decoded_msg = my_class.rlp_decode(binary)
+    expect(decoded_msg).to eq msg
+  end
+
+  it 'list of serializable can be empty' do
+    msg = nested_class.new(records: [])
+    binary = msg.rlp_encode
+    # is valid RLP encoding format
+    expect {Ciri::RLP.decode(binary)}.to_not raise_error
+
+    decoded_msg = nested_class.rlp_decode(binary)
     expect(decoded_msg).to eq msg
   end
 
@@ -139,3 +169,4 @@ RSpec.describe Ciri::RLP::Serializable do
   end
 
 end
+
