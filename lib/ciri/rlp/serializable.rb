@@ -108,7 +108,7 @@ module Ciri
               options = {}
               type = Raw
             end
-            raise InvalidSchemaError.new("missing type #{type} for key #{key}") unless check_key_type(type)
+            raise InvalidSchemaError.new("incorrect type on key #{key}, #{type} is not a valid RLP class") unless check_key_type(type)
             keys << key
             @_schema[key] = KeySchema.new(type: type, options: options)
           end
