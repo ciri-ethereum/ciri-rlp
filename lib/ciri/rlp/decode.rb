@@ -73,13 +73,13 @@ module Ciri
               i += 1
             end
           end
-        elsif type == RawString
+        elsif type == Bytes
           str = decode_stream(s)
-          raise RLP::InvalidError.new "decode #{str.class} from RawString" unless str.is_a?(String)
+          raise RLP::InvalidError.new "decode #{str.class} from Bytes" unless str.is_a?(String)
           str
-        elsif type == RawList
+        elsif type == List
           list = decode_stream(s)
-          raise RLP::InvalidError.new "decode #{list.class} from RawList" unless list.is_a?(Array)
+          raise RLP::InvalidError.new "decode #{list.class} from List" unless list.is_a?(Array)
           list
         elsif type == Raw
           decode_stream(s)
