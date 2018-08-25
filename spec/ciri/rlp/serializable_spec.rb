@@ -18,26 +18,26 @@ require 'ciri/rlp/serializable'
 
 RSpec.describe Ciri::RLP::Serializable do
 
-    class MyClass
-      include Ciri::RLP::Serializable
+  class MyClass
+    include Ciri::RLP::Serializable
 
-      schema [
-               :signature,
-               {nonce: [Integer]},
-               {version: Integer}
-             ]
-      default_data(version: 1)
-    end
+    schema(
+        signature: Ciri::RLP::Bytes,
+        nonce: [Integer],
+        version: Integer,
+    )
+    default_data(version: 1)
+  end
 
-  let(:my_class) { MyClass }
+  let(:my_class) {MyClass}
 
   let(:nested_class) {
     Class.new do
       include Ciri::RLP::Serializable
 
-      schema [
-               {records: [MyClass]},
-             ]
+      schema(
+          records: [MyClass]
+      )
     end
   }
 
@@ -89,22 +89,22 @@ RSpec.describe Ciri::RLP::Serializable do
       my_cap = Class.new do
         include Ciri::RLP::Serializable
 
-        schema [
-                 :name,
-                 {version: Integer}
-               ]
+        schema(
+            name: Ciri::RLP::Bytes,
+            version: Integer
+        )
       end
 
       my_protocol_handshake = Class.new do
         include Ciri::RLP::Serializable
 
-        schema [
-                 {version: Integer},
-                 :name,
-                 {caps: [my_cap]},
-                 {listen_port: Integer},
-                 :id
-               ]
+        schema(
+            version: Integer,
+            name: Ciri::RLP::Bytes,
+            caps: [my_cap],
+            listen_port: Integer,
+            id: Ciri::RLP::Bytes
+        )
       end
 
       encoded_handshake = ['f87d05b1476574682f76312e382e372d756e737461626c652d38366265393162332f64617277696e2d616d6436342f676f312e3130c6c5836574683f80b840da982df3c882252c126ac3ee8fa008ade932c4166dfdc7c117c9852b5df0c6ddcf34bf2555a38596268b3b6bcbdaf48bba57b84a1abc400b4ba65c59ee5342c3'].pack("H*")
@@ -118,12 +118,12 @@ RSpec.describe Ciri::RLP::Serializable do
       get_block_hashes = Class.new do
         include Ciri::RLP::Serializable
         CODE = 0x03
-        schema [
-                 {hash_or_number: Integer},
-                 {amount: Integer},
-                 {skip: Integer},
-                 {reverse: Ciri::RLP::Bool},
-               ]
+        schema(
+            hash_or_number: Integer,
+            amount: Integer,
+            skip: Integer,
+            reverse: Ciri::RLP::Bool,
+        )
       end
 
       encoded_handshake = ['c7831d4c00018080'].pack("H*")
@@ -141,23 +141,23 @@ RSpec.describe Ciri::RLP::Serializable do
       Class.new do
         include Ciri::RLP::Serializable
 
-        schema [
-                 :parent_hash,
-                 :ommers_hash,
-                 :beneficiary,
-                 :state_root,
-                 :transactions_root,
-                 :receipts_root,
-                 :logs_bloom,
-                 {difficulty: Integer},
-                 {number: Integer},
-                 {gas_limit: Integer},
-                 {gas_used: Integer},
-                 {timestamp: Integer},
-                 :extra_data,
-                 :mix_hash,
-                 :nonce,
-               ]
+        schema(
+            parent_hash: Ciri::RLP::Bytes,
+            ommers_hash: Ciri::RLP::Bytes,
+            beneficiary: Ciri::RLP::Bytes,
+            state_root: Ciri::RLP::Bytes,
+            transactions_root: Ciri::RLP::Bytes,
+            receipts_root: Ciri::RLP::Bytes,
+            logs_bloom: Ciri::RLP::Raw,
+            difficulty: Integer,
+            number: Integer,
+            gas_limit: Integer,
+            gas_used: Integer,
+            timestamp: Integer,
+            extra_data: Ciri::RLP::Raw,
+            mix_hash: Ciri::RLP::Bytes,
+            nonce: Ciri::RLP::Bytes,
+        )
       end
     }
 
@@ -169,4 +169,3 @@ RSpec.describe Ciri::RLP::Serializable do
   end
 
 end
-
