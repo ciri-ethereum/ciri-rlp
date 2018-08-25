@@ -34,17 +34,18 @@ Structure:
 ```ruby
 # declare a RLP structure
 class Doge
+  include Ciri
   include Ciri::RLP::Serializable
   
   # RLP is a low level encoding format, only support string(bytes) and list.
   # so we use a list to present structure data
   # we also need to declare column type clearly if column is not string
-  schema [
-    :name,
-    {age: Integer}, # declare age is a Integer type
-    :gender,
-    {has_master: Ciri::RLP::Bool} # dechare bool
-  ]
+  schema(
+    name: RLP::Bytes, # declare name a Bytes type, represent as normal ruby string
+    age: Integer, # declare age as a Integer type
+    gender: RLP::Bytes,
+    has_master: Ciri::RLP::Bool # dechare bool
+  )
 end
 
 doge = Doge.new(name: 'neo doge', age: 5, gender: "boy", has_master: false)

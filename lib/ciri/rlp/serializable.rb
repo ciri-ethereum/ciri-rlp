@@ -33,7 +33,7 @@ module Ciri
     class Bytes
     end
 
-    RawString = Bytes 
+    RawString = Bytes
 
     class List
     end
@@ -46,8 +46,7 @@ module Ciri
     # schema method define ordered data structure for class, and determine how to encoding objects.
     #
     # schema follow `{attr_name: type}` format,
-    # if attr is raw type(string or array of string), you can just use `:attr_name` to define it
-    # schema simple types include Integer, Bool, String, Array...
+    # schema support simple types: Integer, RLP::Bool, RLP::Bytes, RLP::List...
     #
     # schema also support complex types: array and serializable.
     #
@@ -59,21 +58,22 @@ module Ciri
     #
     #   class AuthMsgV4
     #     include Ciri::RLP::Serializable
+    #     include Ciri
     #
     #     # define schema
-    #     schema [
-    #              :signature, # raw type: string
-    #              {initiator_pubkey: MySerializableKey}, # this attr is a RLP serializable object
-    #              {nonce: [Integer]},
-    #              {version: Integer}
-    #            ]
+    #     schema(
+    #       signature: RLP::Bytes, # raw type: string
+    #       initiator_pubkey: MySerializableKey, # this attr is a RLP serializable object
+    #       nonce: [Integer],
+    #       version: Integer
+    #     )
     #
     #     # default values
-    #     default_data(got_plain: false)
+    #     default_data(version: 1)
     #   end
     #
     #   msg = AuthMsgV4.new(signature: "\x00", initiator_pubkey: my_pubkey, nonce: [1, 2, 3], version: 4)
-    #   encoded = msg.rlp_encode
+    #   encoded = AuthMsgV4.rlp_encode(msg)
     #   msg2 = AuthMsgV4.rlp_decode(encoded)
     #   msg == msg2 # true
     #
@@ -93,24 +93,16 @@ module Ciri
         # keys return data columns array
         attr_reader :keys
 
-        KeySchema = Struct.new(:type, :options, keyword_init: true)
+        KeySchema = Struct.new(:type, keyword_init: true)
 
         def initialize(schema)
           keys = []
           @_schema = {}
 
-          schema.each do |key|
-            if key.is_a?(Hash)
-              options = [:optional].map {|o| [o, key.delete(o)]}.to_h
-              raise InvalidSchemaError.new("include unknown options #{key}") unless key.size == 1
-              key, type = key.to_a[0]
-            else
-              options = {}
-              type = Raw
-            end
+          schema.each do |key, type|
             raise InvalidSchemaError.new("incorrect type on key #{key}, #{type} is not a valid RLP class") unless check_key_type(type)
             keys << key
-            @_schema[key] = KeySchema.new(type: type, options: options)
+            @_schema[key] = KeySchema.new(type: type)
           end
 
           @_schema.freeze
@@ -141,7 +133,6 @@ module Ciri
           data_list = []
           used_keys.each do |key|
             value = data[key]
-            next if value.nil? && self[key].options[:optional]
             data_list << encode_with_type(value, self[key].type)
           end
           encode_list(data_list)
@@ -151,7 +142,6 @@ module Ciri
           values = decode_list(input) do |list, stream|
             keys.each do |key|
               # decode data by type
-              next if stream.eof? && self[key].options[:optional]
               list << decode_with_type(stream, self[key].type)
             end
           end
