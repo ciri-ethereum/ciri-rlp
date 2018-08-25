@@ -30,15 +30,13 @@ module Ciri
     class Raw
     end
 
+    # represent Bytes
     class Bytes
     end
 
-    RawString = Bytes
-
+    # represent List
     class List
     end
-
-    RawList = List
 
     # Serializable module allow ruby objects serialize/deserialize to or from RLP encoding.
     # See Ciri::RLP::Serializable::TYPES for supported type.

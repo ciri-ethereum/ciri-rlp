@@ -74,10 +74,10 @@ module Ciri
           end
         elsif type == Raw
           encode_raw(item)
-        elsif type == RawString
+        elsif type == Bytes
           raise RLP::InvalidError.new "expect String, got #{item.class}" unless item.is_a?(String)
           encode_raw(item)
-        elsif type == RawList
+        elsif type == List
           raise RLP::InvalidError.new "expect Array, got #{item.class}" unless item.is_a?(Array)
           encode_raw(item)
         else
