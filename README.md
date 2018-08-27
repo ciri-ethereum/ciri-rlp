@@ -92,7 +92,9 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/ciri-e
 
 ## License
 
-The gem is available as open source under the terms of the [Apache License Version 2.0](http://www.apache.org/licenses/).
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+Copyright, 2018, by Jiang Jinyang
 
 ## Code of Conduct
 
