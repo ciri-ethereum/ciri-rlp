@@ -22,10 +22,12 @@
 
 
 require 'stringio'
+require 'ciri/utils/logger'
 
 module Ciri
   module RLP
     module Decode
+      include Utils::Logger
 
       # Decode input from rlp encoding, only produce string or array
       #
@@ -93,7 +95,7 @@ module Ciri
           raise RLP::InvalidError.new "unknown type #{type}"
         end
       rescue
-        STDERR.puts "when decoding #{s} into #{type}"
+        error "when decoding #{s} into #{type}"
         raise
       end
 

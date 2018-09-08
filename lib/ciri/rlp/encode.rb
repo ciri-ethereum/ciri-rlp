@@ -21,9 +21,13 @@
 # THE SOFTWARE.
 
 
+require 'ciri/utils/logger'
+
 module Ciri
   module RLP
     module Encode
+
+      include Utils::Logger
 
       class InputOverflow < StandardError
       end
@@ -90,7 +94,7 @@ module Ciri
           raise RLP::InvalidError.new "unknown type #{type}"
         end
       rescue
-        STDERR.puts "when encoding #{Utils.to_hex item.to_s} into #{type}"
+        error "when encoding #{Utils.to_hex item.to_s} into #{type}"
         raise
       end
 
