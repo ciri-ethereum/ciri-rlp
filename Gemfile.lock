@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ciri-rlp (1.0.0)
+    ciri-rlp (1.0.1)
       ciri-utils (>= 0.2.2)
 
 GEM
